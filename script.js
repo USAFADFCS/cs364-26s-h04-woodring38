@@ -30,7 +30,9 @@ function getIngredients() {
   // 3. Resolve with "Ingredients ready"
 
   return new Promise((resolve, reject) => {
-    // Your code here
+    showMessage("Gathering ingredients...");
+    wait(2000)
+    .then(() => resolve(showMessage("Ingredients ready")));
   });
 }
 
@@ -43,7 +45,16 @@ function blendSmoothie() {
   // 4. Otherwise resolve with "Smoothie blended"
 
   return new Promise((resolve, reject) => {
-    // Your code here
+    showMessage("Blending special smoothie...");
+    wait(3000);
+    if(Math.floor(Math.random() * 11) <= 3){
+      wait(3000)
+        .then(() => reject(showMessage("ERROR: The blender broke")));
+    }
+    else{
+      wait(3000)
+        .then(() => resolve(showMessage("Special smoothie blended")));
+    }
   });
 }
 
@@ -55,7 +66,9 @@ function pourSmoothie() {
   // 3. Resolve with "Smoothie is ready!"
 
   return new Promise((resolve, reject) => {
-    // Your code here
+    showMessage("Pouring into cup...");
+    wait(1000)
+      .then(() => resolve(showMessage("Special smoothie is ready!")));
   });
 }
 
@@ -72,6 +85,11 @@ function makeSmoothieWithPromises() {
   //   .then(...)
   //   .then(...)
   //   .catch(...)
+
+  getIngredients()
+    .then(() => blendSmoothie())
+    .then(() => pourSmoothie())
+    .catch(() => showMessage("There was an error"));
 }
 
 /* =========================
@@ -88,4 +106,18 @@ async function makeSmoothieAsync() {
   // await pourSmoothie()
   // Show final success message
   // Catch and display any errors
+
+  try {
+    const ingredientsResponse = await getIngredients();
+    showMessage(ingredientsResponse);
+    const blendResponse = await blendSmoothie();
+    showMessage(blendResponse);
+    const pourResponse = await pourSmoothie();
+    showMessage(pourResponse);
+  } catch (err) {
+    showMessage("There was a problem");
+  }
+
 }
+
+button.addEventListener("click", makeSmoothieWithPromises);
